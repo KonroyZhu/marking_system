@@ -1,0 +1,16 @@
+select picked ,id from comment_carhome where id not in(select distinct comid from markin2) and picked>0 and id<1000;
+
+
+select picked ,id,inuse from comment_carhome where id not in(select distinct comid from markin2) and picked>0 and id<1000;
+
+
+select count(id) from comment_carhome where id not in(select distinct comid from markin2) and id<1000;
+
+select id from comment_carhome where id not in(select distinct comid from markin2) and id<1000;
+
+
+select id from comment_carhome where id not in(select distinct comid from markin2) and id<1000;
+
+
+
+update `comment_carhome` set picked=0 where id in(select id from comment_carhome where id not in(select distinct comid from markin2) and id<1000);

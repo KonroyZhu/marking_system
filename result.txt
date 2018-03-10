@@ -1,0 +1,3 @@
+SELECT comid,waiguancom, waiguantend
+FROM markin2
+ORDER BY comid

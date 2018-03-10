@@ -1,0 +1,272 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>markin</title>
+<link rel="stylesheet" href="css/markin.css" type="text/css" />
+<style>
+
+.fin{
+	width:25px;
+ 	height:25px; 
+	margin-left:20px;       
+}
+</style>
+<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery
+/jquery-1.4.min.js"></script>
+<script type="text/javascript">
+
+$(document).ready(function(e) {
+    
+	$.ajax({
+		url:"/markin/Submit",
+		type:"GET", 
+		async:false,
+		success:function(raw_data){
+			data=JSON.parse(raw_data); 
+			alert("loading");  
+			var index=0; 
+			while(data[index]["id"]!=""){
+				//增加关于id的input
+				//alert("testin"); 
+				var $inputid=("<input class='submittend' type='text' name='tendid"+index+"' value='"+data[index]["id"]+"'/>");
+				$('#form').append($inputid);
+				index++;
+			}
+			//addboard("waiguan");
+			
+			
+			
+		},
+		error:function(){
+			alert("ajax error");
+		}
+	});
+	
+});
+
+function addboard(key){
+	
+	
+	//按照八大类型加载题目板块
+	var num=0;
+	while(data[num]["id"]!=""){
+		
+		/*var $commentboard=("<div class='comment-board'> <input id='id"+num+"' type='text' value='"+data[num]["id"]+"' style='display:none' disabled='disabled'/> <div class='item-board'><textarea id='"+key+data[num]["id"]+"' disabled='disabled' >"+data[num][key]+"</textarea><hr/><div class='answer-board'> <ul><li><div class='input' id='"+key+"tend"+num+"' onclick='assign($(this).html(),"+key+","+num+")'>正面</div></li> <li><div class='input' id='"+key+"tend"+num+"' onclick='assign($(this).html(),"+key+","+num+")'>中立</div></li> <li><div class='input' id='"+key+"tend"+num+"' onclick='assign($(this).html(),"+key+","+num+")'>负面</div></li> </ul> <div class='answer'  id='"+key+"answer"+num+"'  >情感倾向</div></div><!--answer-board--> </div><!--item-board-->  </div>");*/
+		//tips1: onclick后面可以不加引号
+		//tips2: 在参数中设置this的内容 传给函数
+		var $commentboard=("<div class='comment-board'> <div class='item-board'><textarea id='"+key+data[num]["id"]+"' disabled='disabled' >"+data[num][key]+"</textarea><hr/><div class='answer-board'> <ul><li><div class='input' id='"+key+"tend"+num+"' onclick=assign(this.innerHTML,'"+key+"',"+num+")>正面</div></li> <li><div class='input' id='"+key+"tend"+num+"' onclick=assign(this.innerHTML,'"+key+"',"+num+")>中立</div></li> <li><div class='input' id='"+key+"tend"+num+"' onclick=assign(this.innerHTML,'"+key+"',"+num+")>负面</div></li> </ul><div class='answer'  id='"+key+"answer"+num+"'  ></div> <label  id='"+key+"label"+num+"'>请选择一个情感倾向</label></div><!--answer-board--> </div><!--item-board-->  </div>");
+		
+		$('.'+key+'-container').append($commentboard);
+		//在form 下面生成 input的内容
+		var $inputtend=("<input class='submittend' id='"+key+"finalltend"+num+"' type='text' name='"+key+"tend"+num+"' value=''/>");
+		var $inputcom=("<input class='submittend'  type='text' name='"+key+"comment"+num+"' value='"+data[num][key]+"'/>");
+		$('#form').append($inputtend);
+		$('#form').append($inputcom);
+		
+		num++;
+
+	}
+	   
+} 
+
+//模拟单选框，将三个情感倾向div的值赋给 最下面的answer div
+function assign(para,key,num){
+	document.getElementById(key+'answer'+ num).innerHTML=para;
+	document.getElementById(key+'label'+ num).innerHTML="<img  class='fin' src='img/fin.png'/>"; 
+	
+}
+
+
+//提交数据
+
+function triggersubmit2(){
+	alert("checkin2");   
+	if(!checkin2("waiguan")){
+		alert("rollback");
+		rollback("waiguan");
+		return ; 
+	}else if(!checkin2("neishi")){
+		rollback("neishi");
+		return;
+	}else if(!checkin2("kongjian")){
+		rollback("kongjian");
+		return;
+	}else if(!checkin2("dongli")){
+		rollback("dongli");
+		return;
+	}else if(!checkin2("youhao")){
+		rollback("youhao");
+		return;
+	}else if(!checkin2("caokong")){
+		rollback("caokong");
+		return;
+	}else if(!checkin2("xingjiabi")){
+		rollback("xingjiabi");
+		return;
+	}else if(!checkin2("shushixing")){
+		rollback("shushixing");
+		return;
+	}else{ 
+		alert("提交成功"); 
+		document.getElementById("submit").click();
+	}
+} 
+function checkin2(key){
+	var num=0;
+	while(num<5){
+		var answer=getanswer(key,num);
+		if(answer==""){ 
+			alert("false");
+			return false; 
+		}else{
+			//alert(key+" finished!");
+			document.getElementById(key+"finalltend"+num).value=answer;
+			num++;
+		}
+	}
+	return true;
+}
+
+function rollback(key){
+	alert("请先完成 "+key+" 的内容~");
+	$("html, body").animate({
+            scrollTop: $("#"+key+"tend"+1+"").offset().top }, {duration: 500,easing: "swing"});
+        	return false;
+}
+/*
+function triggersubmit(){ 
+	var complete=true;
+	var num=0;
+	while(num<5 & complete==true){  
+		//alert("checkin"); 
+		complete=checkin("waiguan",num);
+		complete=checkin("neishi",num);  
+		complete=checkin("kongjian",num);
+		complete=checkin("caokong",num);
+		complete=checkin("dongli",num);
+		complete=checkin("youhao",num); 
+		complete=checkin("shushixing",num);  
+		complete=checkin("xingjiabi",num);  
+		
+		num++; 
+	}
+	alert(complete); 
+	if(complete){
+		document.getElementById("submit").click();
+	}else{
+		alert("标注内容未完成");
+	}
+	
+}
+
+
+function checkin(key,num){
+	var answer=getanswer(key,num);
+	if(answer!=""){
+		document.getElementById(key+"finalltend"+num).value=answer;
+		return true;
+	}else{
+		$("html, body").animate({
+            scrollTop: $("#"+key+"tend"+num+"").offset().top }, {duration: 500,easing: "swing"});
+        	return false;
+	}
+}*/
+
+function getanswer(key,num){
+	return $("#"+key+"answer"+num).html();
+	
+}
+
+/*
+function getdic(){
+	dic={}
+	var num=0;
+	dic["waiguan1"]=getanswer("waiguan",1);
+	while(num<5){
+		dic["waiguan"+num]=getanswer("waiguan",num);
+		dic["neishi"+num]=getanswer("neishi",num);
+		dic["caokong"+num]=getanswer("caokong",num);
+		dic["youhao"+num]=getanswer("youhao",num);
+		dic["dongli"+num]=getanswer("dongli",num);
+		dic["kongjian"+num]=getanswer("kongjian",num);
+		dic["xingjiabi"+num]=getanswer("xingjiabi",num);
+		dic["shushixing"+num]=getanswer("shushixing",num);
+		num++;
+	}
+
+	alert("testin");
+	return dic;
+}*/
+</script>
+</head>
+
+<body>
+
+<div class="top"><p>MARKIN</p></div>
+<!--<div onclick=assign(this.innerHTML,'"+key+"',"+num+") style="width:100px;height:40px;" >正面</div>--><!--onclick=后面可不跟引号-->
+<div class="main-container">
+	<input class="loadmore" type="button" onclick='addboard("waiguan")' value="外观">
+	<div class="waiguan-container">
+        <!--<div class='comment-board'> <input id='id"+num+"' type='text' value='"+data[num]["id"]+"' style='display:none' disabled='disabled'/>  <div class='item-board'><textarea id='"+key+data[num]["id"]+"' disabled='disabled' >"+data[num][key]+"</textarea><hr/><div class='answer-board'>
+        <ul>
+        <li><div class='input' id='waiguantend1' onclick='assign(this.innerHTML,"waiguan",1)'>正面</div></li>
+        <li><div class='input' id='waiguantend1' onclick='assign(this.innerHTML,"waiguan",1)'>中立</div></li>
+        <li><div class='input' id='waiguantend1' onclick='assign(this.innerHTML,"waiguan",1)'>负面</div></li>
+        </ul>
+        <div class='answer'  id='waiguananswer1'  >情感倾向</div>
+        </div></div>
+                                                  </div>-->
+    </div>
+	<input class="loadmore" type="button" onclick='addboard("neishi")' value="内饰">
+</div><!--main-container-->
+
+<div class="main-container">
+	<div class="neishi-container"></div>
+	<input class="loadmore" type="button" onclick='addboard("kongjian")'value="空间">
+</div><!--main-container-->
+ 
+<div class="main-container">
+	<div class="kongjian-container"></div>
+	<input class="loadmore" type="button" onclick='addboard("caokong")'value="操控">
+</div><!--main-container-->
+
+
+
+<div class="main-container">
+	<div class="caokong-container"></div>
+	<input class="loadmore" type="button" onclick='addboard("dongli")' value="动力"/>
+</div><!--main-container-->
+
+
+
+<div class="main-container">
+	<div class="dongli-container"></div>
+	<input class="loadmore" type="button" onclick='addboard("youhao")' value="油耗"/>
+</div><!--main-container-->
+
+
+
+<div class="main-container">
+	<div class="youhao-container"></div>
+	<input class="loadmore" type="button" onclick='addboard("xingjiabi")'value="性价比"/>
+</div><!--main-container-->
+
+
+
+<div class="main-container">
+	<div class="xingjiabi-container"></div>
+	<input class="loadmore" type="button" onclick='addboard("shushixing")' value="舒适性"/>
+</div><!--main-container-->
+
+ 
+
+<div class="main-container">
+	<div class="shushixing-container"></div>
+</div><!--main-container-->
+	<button type="button" style="width:350px;margin-top:100px;border:none;height:25px;border-radius:5px;position:relative;left:520px;background-color:#52dd6c" onclick=triggersubmit2()>提交</button>
+        <form method="post" id="form" action="/markin/Insert">
+    	<input type="submit" id="submit" style="display:none;" value="提交"/>
+    </form>
+</body>
+</html> 

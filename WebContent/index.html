@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>markin</title>
+<style>
+.main-container{
+	width:1200px;
+	background-color:#000;
+	margin:auto;
+}
+.comment-board{
+	width:1040px;
+	height:200px;
+	background-color:#0FC;
+	margin:auto;
+	margin-bottom:50px;
+	position:relative;
+	top:50px;
+	
+}
+.item-board{
+	
+}
+textarea{
+	font-size:18px;
+	color:#000;
+	font-weight:bold;
+	padding-top:10px;
+	width:97%;
+	margin:none;
+	position:relative;
+	left:20px;
+	background-color:transparent;
+	margin-top:10px;
+	border:none;
+}
+ul{
+	 list-style:none;
+	 margin-left:-20px;
+}
+</style>
+<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery
+/jquery-1.4.min.js"></script>
+<script type="text/javascript">
+
+$(document).ready(function(e) {
+    alert("test");
+	$.ajax({
+		url:"/markin/Submit",
+		type:"GET",
+		async:true,
+		success:function(raw_data){
+			data=JSON.parse(raw_data);
+			alert("success");
+			var num=0;
+			while(data[num]["id"]!=""){
+				addboard(num,"waiguan");
+				alert(num);
+				num++;
+			}
+		},
+		error:function(){
+			alert("ajax error");
+		}
+	});
+});
+function addboard(num,key){
+	var $commentboard=("<div class='comment-board'> <input id='id"+num+"' type='text' value='"+data[num]["id"]+"' style='display:none' disabled='disabled'/>  <div class='item-board'><textarea id='"+key+data[num]["id"]+"' disabled='disabled' >"+data[num][key]+"</textarea><hr/><div class='answer-board'><ul><li><label><input id='"+key+"tend"+num+"'	name='"+key+"tend"+num+"' type='radio' value='1'/>正向</label> </li><li><label><input id='"+key+"tend"+num+"'	name='"+key+"tend"+num+"' type='radio' value='0'/>中立</label> </li><li><label><input id='"+key+"tend"+num+"'	name='"+key+"tend"+num+"' type='radio' value='-1'/>负面</label> </li></ul></div><!--answer-board--> </div><!--item-board-->                                            </div>");
+
+	$('.main-container').append($commentboard);
+}
+</script>
+</head>
+
+<body>
+<div class="main-container">
+</div><!--main-container-->
+</body>
+</html>

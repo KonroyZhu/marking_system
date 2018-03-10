@@ -1,0 +1,22 @@
+SELECT id
+FROM markin2
+WHERE comid
+IN (
+
+SELECT comid
+FROM (
+
+SELECT comid, count( comid ) AS coun
+FROM markin2
+GROUP BY comid
+) AS C
+WHERE C.coun >3
+)
+
+
+
+SELECT count( comid ) , comid
+FROM markin2
+GROUP BY comid
+ORDER BY count( comid ) DESC
+
